@@ -365,7 +365,23 @@ refactor(sections): extract content renderer to separate component
 
 - Subject line: max 72 characters, imperative mood, no period
 - Never use `update`, `change`, `misc`, or `wip` as the description
-- Reference ticket in body when relevant: `Closes KURA-XXX`
+- Every commit message must end with `Refs: #kura-XXX` on its own line
+
+### Commit message format
+
+```
+type(scope): short description
+
+Refs: #kura-XXX
+```
+
+### Example
+
+```
+chore(scaffold): initialize Next.js 15 monorepo with TypeScript, Tailwind, Supabase clients, and CI
+
+Refs: #kura-001
+```
 
 ---
 

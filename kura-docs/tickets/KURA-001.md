@@ -226,6 +226,8 @@ export {};
 
 ```
 chore(scaffold): initialize Next.js 15 monorepo with TypeScript, Tailwind, Supabase clients, and CI
+
+Refs: #kura-001
 ```
 
 ### PR Title
