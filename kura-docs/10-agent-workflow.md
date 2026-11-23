@@ -26,14 +26,14 @@ That is what the Kura docs folder is. Every agent reads it before building anyth
 
 ## 1. Tooling Stack
 
-| Role | Tool | Why |
-|---|---|---|
-| Primary build agent | Claude Code | Reads docs, works in repo, runs commands, edits files. Best for sustained multi-file work |
-| Ticket writing + architecture review | Claude.ai (this Project) | Senior dev brain — tickets, reviews, decisions, context |
-| Version control | GitHub | PR-based flow, branch protection on main |
-| Project tracking | GitHub Issues | Free, lives next to the code, no extra tool needed in v1 |
-| Environment secrets | Vercel dashboard + `.env.local` | Never committed to repo |
-| DB migrations | Supabase CLI | `supabase db push` — versioned, reviewable, reversible on dev |
+| Role                                 | Tool                            | Why                                                                                       |
+| ------------------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------- |
+| Primary build agent                  | Claude Code                     | Reads docs, works in repo, runs commands, edits files. Best for sustained multi-file work |
+| Ticket writing + architecture review | Claude.ai (this Project)        | Senior dev brain — tickets, reviews, decisions, context                                   |
+| Version control                      | GitHub                          | PR-based flow, branch protection on main                                                  |
+| Project tracking                     | GitHub Issues                   | Free, lives next to the code, no extra tool needed in v1                                  |
+| Environment secrets                  | Vercel dashboard + `.env.local` | Never committed to repo                                                                   |
+| DB migrations                        | Supabase CLI                    | `supabase db push` — versioned, reviewable, reversible on dev                             |
 
 > When collaborators join (Phase 4+), migrate tracking to Linear.
 > Until then, GitHub Issues is sufficient.
@@ -165,6 +165,8 @@ HARD RULES — never violate these:
 - All DB access via lib/supabase/server.ts (server) or lib/supabase/client.ts (client).
 - All API input validated with Zod before any DB call.
 - Minimal diffs — only change what the ticket requires.
+- Every commit message must end with `Refs: #kura-XXX` on its own line
+  where XXX matches the current ticket number (e.g. `Refs: #kura-001`).
 - If you are unsure about an architectural decision, stop and ask.
   Do not guess and do not proceed.
 
@@ -183,15 +185,15 @@ Supabase (Auth + Postgres + Storage) · Zod · Vercel
 These decisions and actions cannot be delegated to any AI agent.
 You are accountable for them.
 
-| Action | Why you own it |
-|---|---|
-| Reviewing and approving every PR before merge | You are accountable for what ships to production |
-| Reviewing DB migration files before `supabase db push` | Migrations on prod are irreversible |
-| Setting and rotating all environment variables | Security boundary — no agent sees production secrets |
-| Activating design tokens on the live portfolio | Your aesthetic, your brand, your call |
-| Signing off on each phase gate (DoD checklist) | You decide when a phase is complete |
-| Deciding when to scope-change a ticket | Only you can expand or contract scope |
-| Approving any new npm dependency | Every dependency is a maintenance and security decision |
+| Action                                                 | Why you own it                                          |
+| ------------------------------------------------------ | ------------------------------------------------------- |
+| Reviewing and approving every PR before merge          | You are accountable for what ships to production        |
+| Reviewing DB migration files before `supabase db push` | Migrations on prod are irreversible                     |
+| Setting and rotating all environment variables         | Security boundary — no agent sees production secrets    |
+| Activating design tokens on the live portfolio         | Your aesthetic, your brand, your call                   |
+| Signing off on each phase gate (DoD checklist)         | You decide when a phase is complete                     |
+| Deciding when to scope-change a ticket                 | Only you can expand or contract scope                   |
+| Approving any new npm dependency                       | Every dependency is a maintenance and security decision |
 
 ---
 
@@ -199,36 +201,37 @@ You are accountable for them.
 
 Everything not in the list above.
 
-| Action | Agent handles it |
-|---|---|
-| Writing all production code | ✅ |
-| Creating and editing files | ✅ |
-| Running TypeScript, ESLint, build checks | ✅ |
-| Opening PRs with the standard template | ✅ |
-| Updating documentation when code changes it | ✅ |
-| Writing tests | ✅ |
-| Following the section rendering spec exactly | ✅ |
+| Action                                       | Agent handles it |
+| -------------------------------------------- | ---------------- |
+| Writing all production code                  | ✅               |
+| Creating and editing files                   | ✅               |
+| Running TypeScript, ESLint, build checks     | ✅               |
+| Opening PRs with the standard template       | ✅               |
+| Updating documentation when code changes it  | ✅               |
+| Writing tests                                | ✅               |
+| Following the section rendering spec exactly | ✅               |
 
 ---
 
 ## 7. Risk Register & Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| Agent ignores docs and invents patterns | High without the prompt | High | Always start with the Agent Context Prompt. If agent skips doc-reading, restart the session. |
-| Agent expands ticket scope | Medium | Medium | Tickets are scoped small deliberately. If agent modifies files outside the ticket, stop and roll back those changes. |
-| DB migration errors in production | Low with discipline | High | Always test migrations on `kura-dev` Supabase project. Never push directly to `kura-prod`. |
-| Design tokens breaking the layout | Low | Medium | Token preview iframe (KURA-030) catches this before activation. |
-| Phase creep — Phase 2 work during Phase 1 | Medium | Medium | Build log gates this. If a ticket isn't in the current phase queue, it doesn't get built. |
-| Lost context between sessions | Low | High | Build log + this Project memory = zero context loss between sessions. |
-| Agent introduces `any` types or hardcoded values | Medium | Medium | CI typecheck catches `any`. PR review here catches hardcoded values. |
-| Dependency added without approval | Low | Medium | Hard rule in Agent Context Prompt. CI build diff shows `package.json` changes. |
+| Risk                                             | Likelihood              | Impact | Mitigation                                                                                                           |
+| ------------------------------------------------ | ----------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
+| Agent ignores docs and invents patterns          | High without the prompt | High   | Always start with the Agent Context Prompt. If agent skips doc-reading, restart the session.                         |
+| Agent expands ticket scope                       | Medium                  | Medium | Tickets are scoped small deliberately. If agent modifies files outside the ticket, stop and roll back those changes. |
+| DB migration errors in production                | Low with discipline     | High   | Always test migrations on `kura-dev` Supabase project. Never push directly to `kura-prod`.                           |
+| Design tokens breaking the layout                | Low                     | Medium | Token preview iframe (KURA-030) catches this before activation.                                                      |
+| Phase creep — Phase 2 work during Phase 1        | Medium                  | Medium | Build log gates this. If a ticket isn't in the current phase queue, it doesn't get built.                            |
+| Lost context between sessions                    | Low                     | High   | Build log + this Project memory = zero context loss between sessions.                                                |
+| Agent introduces `any` types or hardcoded values | Medium                  | Medium | CI typecheck catches `any`. PR review here catches hardcoded values.                                                 |
+| Dependency added without approval                | Low                     | Medium | Hard rule in Agent Context Prompt. CI build diff shows `package.json` changes.                                       |
 
 ---
 
 ## 8. If the Agent Gets Stuck or Confused
 
 Signs the agent is confused:
+
 - Asks a question that is answered in the docs
 - Proposes a file structure different from `01-architecture.md`
 - Starts writing code before stating WHY/WHAT/HOW
@@ -236,6 +239,7 @@ Signs the agent is confused:
 - Creates files in wrong directories
 
 What to do:
+
 1. Stop the agent immediately
 2. Come back here
 3. Paste the agent's question or proposed approach
@@ -254,22 +258,22 @@ Every guess compounds into technical debt.
 
 Create these labels in the GitHub repo before KURA-001:
 
-| Label | Color | Usage |
-|---|---|---|
-| `phase:0` | #6b7280 | Foundation tickets |
-| `phase:1` | #3b82f6 | Public portfolio tickets |
-| `phase:2` | #8b5cf6 | Admin CMS tickets |
-| `phase:3` | #f59e0b | Design token engine tickets |
-| `phase:4` | #ec4899 | SaaS layer tickets |
-| `type:feat` | #22c55e | New feature |
-| `type:fix` | #ef4444 | Bug fix |
-| `type:chore` | #6b7280 | Config, deps, tooling |
-| `type:docs` | #0ea5e9 | Documentation only |
-| `status:queued` | #d1d5db | Not started |
-| `status:in-progress` | #fbbf24 | Currently being built |
-| `status:review` | #a78bfa | PR open, awaiting review |
-| `status:done` | #22c55e | Merged and complete |
-| `blocked` | #ef4444 | Cannot proceed — dependency missing |
+| Label                | Color   | Usage                               |
+| -------------------- | ------- | ----------------------------------- |
+| `phase:0`            | #6b7280 | Foundation tickets                  |
+| `phase:1`            | #3b82f6 | Public portfolio tickets            |
+| `phase:2`            | #8b5cf6 | Admin CMS tickets                   |
+| `phase:3`            | #f59e0b | Design token engine tickets         |
+| `phase:4`            | #ec4899 | SaaS layer tickets                  |
+| `type:feat`          | #22c55e | New feature                         |
+| `type:fix`           | #ef4444 | Bug fix                             |
+| `type:chore`         | #6b7280 | Config, deps, tooling               |
+| `type:docs`          | #0ea5e9 | Documentation only                  |
+| `status:queued`      | #d1d5db | Not started                         |
+| `status:in-progress` | #fbbf24 | Currently being built               |
+| `status:review`      | #a78bfa | PR open, awaiting review            |
+| `status:done`        | #22c55e | Merged and complete                 |
+| `blocked`            | #ef4444 | Cannot proceed — dependency missing |
 
 Each GitHub Issue maps 1:1 to a Kura ticket (KURA-001 = Issue #1).
 Issue title format: `KURA-XXX: [Short title]`
@@ -285,11 +289,10 @@ Set these in GitHub → Settings → Branches before writing a single line of co
 ```
 ✅ Require a pull request before merging
 ✅ Require approvals: 1 (you review your own PRs from the agent)
-✅ Require status checks to pass:
+⏸ Status checks — STAGE 2 ONLY (add after KURA-001 merges and the CI workflow has run once)
      · typecheck
      · lint
      · build
-✅ Require branches to be up to date before merging
 ✅ Do not allow bypassing the above settings
 ❌ Allow force pushes — OFF
 ❌ Allow deletions — OFF
@@ -311,13 +314,13 @@ Set these in GitHub → Settings → Branches before writing a single line of co
 
 Working at 3–4 sessions per week, each session 2–3 hours:
 
-| Phase | Tickets | Estimated duration |
-|---|---|---|
-| Phase 0 — Foundation | 3 | 1 week |
-| Phase 1 — Public portfolio | 11 | 2–3 weeks |
-| Phase 2 — Admin CMS | 12 | 3–4 weeks |
-| Phase 3 — Design token engine | 7 | 1–2 weeks |
-| **Total to working product** | **33** | **~8–10 weeks** |
+| Phase                         | Tickets | Estimated duration |
+| ----------------------------- | ------- | ------------------ |
+| Phase 0 — Foundation          | 3       | 1 week             |
+| Phase 1 — Public portfolio    | 11      | 2–3 weeks          |
+| Phase 2 — Admin CMS           | 12      | 3–4 weeks          |
+| Phase 3 — Design token engine | 7       | 1–2 weeks          |
+| **Total to working product**  | **33**  | **~8–10 weeks**    |
 
 Phase 4 (SaaS) is a separate product sprint.
 Scope and ticket it after Phase 3 ships and is stable.

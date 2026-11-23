@@ -9,8 +9,8 @@
 ## Current State
 
 **Phase:** 0 — Foundation
-**Last completed ticket:** None — documentation phase
-**Next ticket:** KURA-001 — Scaffold Next.js monorepo + tooling
+**Last completed ticket:** KURA-001 — Scaffold Next.js monorepo + tooling
+**Next ticket:** KURA-002 — Supabase project setup + initial migration
 **Blockers:** None
 
 ---
@@ -51,7 +51,7 @@
 
 | ID | Title | Status | Estimate |
 |---|---|---|---|
-| KURA-001 | Scaffold Next.js monorepo + tooling | ⏳ Queued | 2h 30m |
+| KURA-001 | Scaffold Next.js monorepo + tooling | ✅ Complete | 2h 30m |
 | KURA-002 | Supabase project setup + initial migration | ⏳ Queued | 2h 30m |
 | KURA-003 | Vercel project + env vars + CI pipeline | ⏳ Queued | 1h 30m |
 
@@ -123,3 +123,14 @@ Tickets to be written after Phase 3 is complete.
 ---
 
 <!-- APPEND NEW SESSIONS BELOW THIS LINE -->
+
+### Session 002 — 2026-11-23
+
+**Type:** Implementation — KURA-001
+**Completed:**
+- Scaffolded Next.js 15 App Router project with strict TypeScript.
+- Added Tailwind CSS v4, ESLint, Supabase SSR clients, typed placeholders, health route, root middleware stub, security headers, environment template, and CI workflow.
+- Verified `npm run dev`, `/api/health`, `npx tsc --noEmit`, `npm run lint`, and `npm run build`.
+
+**Open decisions:** None
+**Next session starts at:** KURA-002
